@@ -19,6 +19,7 @@ package org.springframework.data.gemfire;
 import java.io.File;
 import java.util.List;
 
+import com.cba.EncryptionManager;
 import org.springframework.beans.factory.BeanNameAware;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -62,6 +63,19 @@ public class DiskStoreFactoryBean implements BeanNameAware , FactoryBean<DiskSto
 
 	private String name;
 
+	//EaR Change Begin
+	private boolean encrypted;
+
+	public boolean getEncrypted() {
+		return encrypted;
+	}
+
+	public void setEncrypted(boolean encrypted) {
+		this.encrypted = encrypted;
+	}
+	//EaR Change End
+
+
 	@Override
 	public DiskStore getObject() throws Exception {
 		return diskStore;
@@ -80,7 +94,7 @@ public class DiskStoreFactoryBean implements BeanNameAware , FactoryBean<DiskSto
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		Assert.state(cache != null, String.format("A reference to the GemFire Cache must be set for Disk Store '%1$s'.",
-			getName()));
+				getName()));
 
 		DiskStoreFactory diskStoreFactory = cache.createDiskStoreFactory();
 
@@ -120,7 +134,7 @@ public class DiskStoreFactoryBean implements BeanNameAware , FactoryBean<DiskSto
 				DiskDir diskDir = diskDirs.get(index);
 				diskDirFiles[index] = new File(diskDir.location);
 				diskDirSizes[index] = (diskDir.maxSize != null ? diskDir.maxSize
-					: DiskStoreFactory.DEFAULT_DISK_DIR_SIZE);
+						: DiskStoreFactory.DEFAULT_DISK_DIR_SIZE);
 			}
 
 			diskStoreFactory.setDiskDirsAndSizes(diskDirFiles, diskDirSizes);
@@ -128,8 +142,16 @@ public class DiskStoreFactoryBean implements BeanNameAware , FactoryBean<DiskSto
 
 		diskStore = diskStoreFactory.create(getName());
 
+		//EaR changes begin
+		System.out.println("------->>>> EAR: encrypted flag is set to " + encrypted); // <--- TODO: remove this code
+
+		if (encrypted) {
+			EncryptionManager.add(diskStore.getName());
+		}
+		//EaR changes end
+
 		Assert.notNull(diskStore, String.format("DiskStore with name '%1$s' failed to be created successfully.",
-			diskStore.getName()));
+				diskStore.getName()));
 	}
 
 	public void setCache(GemFireCache cache) {
@@ -156,8 +178,8 @@ public class DiskStoreFactoryBean implements BeanNameAware , FactoryBean<DiskSto
 
 	protected void validateCompactionThreshold(final Integer compactionThreshold) {
 		Assert.isTrue(compactionThreshold == null || (compactionThreshold >= 0 && compactionThreshold <= 100),
-			String.format("The DiskStore's (%1$s) compaction threshold (%2$d) must be an integer value between 0 and 100 inclusive.",
-				this.name, compactionThreshold));
+				String.format("The DiskStore's (%1$s) compaction threshold (%2$d) must be an integer value between 0 and 100 inclusive.",
+						this.name, compactionThreshold));
 	}
 
 	public void setDiskDirs(List<DiskDir> diskDirs) {

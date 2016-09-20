@@ -15,9 +15,6 @@
  */
 package org.springframework.data.gemfire.config;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
@@ -31,6 +28,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.xml.DomUtils;
 import org.w3c.dom.Element;
 
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 /**
  * Parser for &lt;disk-store&gt; bean definitions.
  *
@@ -40,7 +40,7 @@ import org.w3c.dom.Element;
  * @see org.springframework.beans.factory.support.BeanDefinitionBuilder
  * @see org.springframework.beans.factory.xml.AbstractSingleBeanDefinitionParser
  * @see org.springframework.data.gemfire.DiskStoreFactoryBean
- * @see org.w3c.dom.Element
+ * @see Element
  */
 public class DiskStoreParser extends AbstractSingleBeanDefinitionParser {
 
@@ -49,17 +49,18 @@ public class DiskStoreParser extends AbstractSingleBeanDefinitionParser {
 	private static void registerDiskStoreBeanPostProcessor(final ParserContext parserContext) {
 		if (registered.compareAndSet(false, true)) {
 			AbstractBeanDefinition diskStoreBeanPostProcessor = BeanDefinitionBuilder
-				.genericBeanDefinition(DiskStoreBeanPostProcessor.class)
-				.setRole(BeanDefinition.ROLE_INFRASTRUCTURE)
-				.getBeanDefinition();
+					.genericBeanDefinition(DiskStoreBeanPostProcessor.class)
+					.setRole(BeanDefinition.ROLE_INFRASTRUCTURE)
+					.getBeanDefinition();
 
 			BeanDefinitionReaderUtils.registerWithGeneratedName(diskStoreBeanPostProcessor,
-				parserContext.getRegistry());
+					parserContext.getRegistry());
 		}
 	}
 
 	@Override
 	protected Class<?> getBeanClass(Element element) {
+		System.out.println("------->>>> EAR DiskStoreParser: getBeanClass " +element.toString()); // <--- TODO: remove this code
 		return DiskStoreFactoryBean.class;
 	}
 
@@ -81,6 +82,10 @@ public class DiskStoreParser extends AbstractSingleBeanDefinitionParser {
 		ParsingUtils.setPropertyValue(element, builder, "queue-size");
 		ParsingUtils.setPropertyValue(element, builder, "time-interval");
 		ParsingUtils.setPropertyValue(element, builder, "write-buffer-size");
+		//CBA EaR Changes - Begin
+		System.out.println("------->>>> EAR: setting encrypted property being calle in DiskStoreParser"); // <--- TODO: remove this code
+		ParsingUtils.setPropertyValue(element, builder, "encrypted");
+		//CBA EaR Changes - End
 
 		List<Element> diskDirElements = DomUtils.getChildElementsByTagName(element, "disk-dir");
 

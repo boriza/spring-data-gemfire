@@ -39,7 +39,7 @@ import com.gemstone.gemfire.internal.datasource.ConfigProperty;
 
 /**
  * Parser for &lt;cache&gt; bean definitions.
- * 
+ *
  * @author Costin Leau
  * @author Oliver Gierke
  * @author David Turanski
@@ -69,6 +69,7 @@ class CacheParser extends AbstractSingleBeanDefinitionParser {
 		ParsingUtils.setPropertyValue(element, builder, "lock-lease");
 		ParsingUtils.setPropertyValue(element, builder, "lock-timeout");
 		ParsingUtils.setPropertyValue(element, builder, "message-sync-interval");
+		ParsingUtils.setPropertyValue(element, builder, "message-sync-interval");
 		parsePdxDiskStore(element, parserContext, builder);
 		ParsingUtils.setPropertyValue(element, builder, "pdx-ignore-unread-fields");
 		ParsingUtils.setPropertyValue(element, builder, "pdx-read-serialized");
@@ -77,6 +78,11 @@ class CacheParser extends AbstractSingleBeanDefinitionParser {
 		ParsingUtils.setPropertyValue(element, builder, "search-timeout");
 		ParsingUtils.setPropertyValue(element, builder, "use-cluster-configuration");
 
+		//CBA EaR Changes - Begin
+		ParsingUtils.setPropertyValue(element, builder, "encryption-key");
+		ParsingUtils.setPropertyValue(element, builder, "vault-enabled");
+		//CBA EaR Changes - End
+
 		List<Element> txListeners = DomUtils.getChildElementsByTagName(element, "transaction-listener");
 
 		if (!CollectionUtils.isEmpty(txListeners)) {
@@ -84,7 +90,7 @@ class CacheParser extends AbstractSingleBeanDefinitionParser {
 
 			for (Element txListener : txListeners) {
 				transactionListeners.add(ParsingUtils.parseRefOrNestedBeanDeclaration(
-					parserContext, txListener, builder));
+						parserContext, txListener, builder));
 			}
 
 			builder.addPropertyValue("transactionListeners", transactionListeners);
@@ -94,7 +100,7 @@ class CacheParser extends AbstractSingleBeanDefinitionParser {
 
 		if (txWriter != null) {
 			builder.addPropertyValue("transactionWriter", ParsingUtils.parseRefOrNestedBeanDeclaration(
-				parserContext, txWriter, builder));
+					parserContext, txWriter, builder));
 		}
 
 		Element gatewayConflictResolver = DomUtils.getChildElementByTagName(element, "gateway-conflict-resolver");
@@ -102,7 +108,7 @@ class CacheParser extends AbstractSingleBeanDefinitionParser {
 		if (gatewayConflictResolver != null) {
 			ParsingUtils.throwExceptionIfNotGemfireV7(element.getLocalName(), "gateway-conflict-resolver", parserContext);
 			builder.addPropertyValue("gatewayConflictResolver", ParsingUtils.parseRefOrSingleNestedBeanDeclaration(
-				parserContext, gatewayConflictResolver, builder));
+					parserContext, gatewayConflictResolver, builder));
 		}
 
 		parseDynamicRegionFactory(element, builder);
@@ -117,7 +123,7 @@ class CacheParser extends AbstractSingleBeanDefinitionParser {
 	/* (non-Javadoc) */
 	void registerGemFireBeanFactoryPostProcessors(BeanDefinitionRegistry registry) {
 		BeanDefinitionReaderUtils.registerWithGeneratedName(BeanDefinitionBuilder.genericBeanDefinition(
-			CustomEditorRegisteringBeanFactoryPostProcessor.class).getBeanDefinition(), registry);
+				CustomEditorRegisteringBeanFactoryPostProcessor.class).getBeanDefinition(), registry);
 	}
 
 	private void parsePdxDiskStore(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
@@ -133,12 +139,12 @@ class CacheParser extends AbstractSingleBeanDefinitionParser {
 	/* (non-Javadoc) */
 	void registerPdxDiskStoreAwareBeanFactoryPostProcessor(BeanDefinitionRegistry registry, String pdxDiskStoreName) {
 		BeanDefinitionReaderUtils.registerWithGeneratedName(
-			createPdxDiskStoreAwareBeanFactoryPostProcessorBeanDefinition(pdxDiskStoreName), registry);
+				createPdxDiskStoreAwareBeanFactoryPostProcessorBeanDefinition(pdxDiskStoreName), registry);
 	}
 
 	private AbstractBeanDefinition createPdxDiskStoreAwareBeanFactoryPostProcessorBeanDefinition(String pdxDiskStoreName) {
 		BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(
-			PdxDiskStoreAwareBeanFactoryPostProcessor.class);
+				PdxDiskStoreAwareBeanFactoryPostProcessor.class);
 		builder.addConstructorArgValue(pdxDiskStoreName);
 		return builder.getBeanDefinition();
 	}
@@ -156,7 +162,7 @@ class CacheParser extends AbstractSingleBeanDefinitionParser {
 	private BeanDefinitionBuilder buildDynamicRegionSupport(Element dynamicRegionFactory) {
 		if (dynamicRegionFactory != null) {
 			BeanDefinitionBuilder dynamicRegionSupport = BeanDefinitionBuilder.genericBeanDefinition(
-				CacheFactoryBean.DynamicRegionSupport.class);
+					CacheFactoryBean.DynamicRegionSupport.class);
 
 			String diskDirectory = dynamicRegionFactory.getAttribute("disk-dir");
 
@@ -196,7 +202,7 @@ class CacheParser extends AbstractSingleBeanDefinitionParser {
 
 			for (Element jndiBinding : jndiBindings) {
 				BeanDefinitionBuilder jndiDataSource = BeanDefinitionBuilder.genericBeanDefinition(
-					CacheFactoryBean.JndiDataSource.class);
+						CacheFactoryBean.JndiDataSource.class);
 
 				// NOTE 'jndi-name' and 'type' are required by the XSD so we should have at least 2 attributes.
 				NamedNodeMap attributes = jndiBinding.getAttributes();
@@ -222,10 +228,10 @@ class CacheParser extends AbstractSingleBeanDefinitionParser {
 						type = (StringUtils.hasText(type) ? type : String.class.getName());
 
 						props.add(BeanDefinitionBuilder.genericBeanDefinition(ConfigProperty.class)
-							.addConstructorArgValue(key)
-							.addConstructorArgValue(value)
-							.addConstructorArgValue(type)
-							.getBeanDefinition());
+								.addConstructorArgValue(key)
+								.addConstructorArgValue(value)
+								.addConstructorArgValue(type)
+								.getBeanDefinition());
 					}
 
 					jndiDataSource.addPropertyValue("props", props);
