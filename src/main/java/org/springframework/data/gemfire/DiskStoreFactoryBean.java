@@ -93,65 +93,69 @@ public class DiskStoreFactoryBean implements BeanNameAware , FactoryBean<DiskSto
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		Assert.state(cache != null, String.format("A reference to the GemFire Cache must be set for Disk Store '%1$s'.",
-				getName()));
+			Assert.state(cache != null, String.format("A reference to the GemFire Cache must be set for Disk Store '%1$s'.",
+					getName()));
 
-		DiskStoreFactory diskStoreFactory = cache.createDiskStoreFactory();
+			DiskStoreFactory diskStoreFactory = cache.createDiskStoreFactory();
 
-		if (allowForceCompaction != null) {
-			diskStoreFactory.setAllowForceCompaction(allowForceCompaction);
-		}
-		if (autoCompact != null) {
-			diskStoreFactory.setAutoCompact(autoCompact);
-		}
-		if (compactionThreshold != null) {
-			diskStoreFactory.setCompactionThreshold(compactionThreshold);
-		}
-		if (diskUsageCriticalPercentage != null) {
-			diskStoreFactory.setDiskUsageCriticalPercentage(diskUsageCriticalPercentage);
-		}
-		if (diskUsageWarningPercentage != null) {
-			diskStoreFactory.setDiskUsageWarningPercentage(diskUsageWarningPercentage);
-		}
-		if (maxOplogSize != null) {
-			diskStoreFactory.setMaxOplogSize(maxOplogSize);
-		}
-		if (queueSize != null) {
-			diskStoreFactory.setQueueSize(queueSize);
-		}
-		if (timeInterval != null) {
-			diskStoreFactory.setTimeInterval(timeInterval);
-		}
-		if (writeBufferSize != null) {
-			diskStoreFactory.setWriteBufferSize(writeBufferSize);
-		}
-
-		if (!CollectionUtils.isEmpty(diskDirs)) {
-			File[] diskDirFiles = new File[diskDirs.size()];
-			int[] diskDirSizes = new int[diskDirs.size()];
-
-			for (int index = 0; index < diskDirs.size(); index++) {
-				DiskDir diskDir = diskDirs.get(index);
-				diskDirFiles[index] = new File(diskDir.location);
-				diskDirSizes[index] = (diskDir.maxSize != null ? diskDir.maxSize
-						: DiskStoreFactory.DEFAULT_DISK_DIR_SIZE);
+			if (allowForceCompaction != null) {
+				diskStoreFactory.setAllowForceCompaction(allowForceCompaction);
+			}
+			if (autoCompact != null) {
+				diskStoreFactory.setAutoCompact(autoCompact);
 			}
 
-			diskStoreFactory.setDiskDirsAndSizes(diskDirFiles, diskDirSizes);
-		}
+			if (compactionThreshold != null) {
+				diskStoreFactory.setCompactionThreshold(compactionThreshold);
+			}
+			if (diskUsageCriticalPercentage != null) {
+				diskStoreFactory.setDiskUsageCriticalPercentage(diskUsageCriticalPercentage);
+			}
+			if (diskUsageWarningPercentage != null) {
+				diskStoreFactory.setDiskUsageWarningPercentage(diskUsageWarningPercentage);
+			}
 
-		diskStore = diskStoreFactory.create(getName());
+			if (maxOplogSize != null) {
+				diskStoreFactory.setMaxOplogSize(maxOplogSize);
+			}
+			if (queueSize != null) {
+				diskStoreFactory.setQueueSize(queueSize);
+			}
+			if (timeInterval != null) {
+				diskStoreFactory.setTimeInterval(timeInterval);
+			}
 
-		//EaR changes begin
-		System.out.println("------->>>> EAR: encrypted flag is set to " + encrypted); // <--- TODO: remove this code
+			if (writeBufferSize != null) {
+				diskStoreFactory.setWriteBufferSize(writeBufferSize);
+			}
 
-		if (encrypted) {
-			EncryptionManager.add(diskStore.getName());
-		}
-		//EaR changes end
+			if (!CollectionUtils.isEmpty(diskDirs)) {
+				File[] diskDirFiles = new File[diskDirs.size()];
+				int[] diskDirSizes = new int[diskDirs.size()];
 
-		Assert.notNull(diskStore, String.format("DiskStore with name '%1$s' failed to be created successfully.",
-				diskStore.getName()));
+				for (int index = 0; index < diskDirs.size(); index++) {
+					DiskDir diskDir = diskDirs.get(index);
+					diskDirFiles[index] = new File(diskDir.location);
+					diskDirSizes[index] = (diskDir.maxSize != null ? diskDir.maxSize
+							: DiskStoreFactory.DEFAULT_DISK_DIR_SIZE);
+				}
+
+				diskStoreFactory.setDiskDirsAndSizes(diskDirFiles, diskDirSizes);
+			}
+
+			//EaR changes begin
+			if (encrypted) {
+				EncryptionManager.add(getName());
+			}
+			//EaR changes end
+
+			System.out.println("------->>>> EAR: creating disk store factory"); ///<--- TODO: remove me
+			diskStore = diskStoreFactory.create(getName());
+			System.out.println("------->>>> EAR: creating disk store factory"); ///<--- TODO: remove me
+
+			Assert.notNull(diskStore, String.format("DiskStore with name '%1$s' failed to be created successfully.",
+					diskStore.getName()));
+
 	}
 
 	public void setCache(GemFireCache cache) {
