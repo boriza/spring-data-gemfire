@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.springframework.data</groupId>
 	<artifactId>spring-data-gemfire</artifactId>
-	<version>1.8.3.EAR</version>
+	<version>1.9.0.M1.EaR</version>
 
 	<name>Spring Data Gemfire</name>
 
 	<parent>
 		<groupId>org.springframework.data.build</groupId>
 		<artifactId>spring-data-parent</artifactId>
-		<version>1.8.3.BUILD-SNAPSHOT</version>
+		<version>1.9.0.M1</version>
 	</parent>
 
 	<properties>
@@ -22,11 +21,7 @@
 		<gemfire.version>8.2.0</gemfire.version>
 		<multithreadedtc.version>1.01</multithreadedtc.version>
 		<servlet-api.version>2.5</servlet-api.version>
-		<springdata.commons>1.12.3.BUILD-SNAPSHOT</springdata.commons>
-
-		<!-- IGNORE BUNDLOR -->
-		<bundlor.enabled>FALSE</bundlor.enabled>
-		<bundlor.failOnWarnings>FALSE</bundlor.failOnWarnings>
+		<springdata.commons>1.13.0.M1</springdata.commons>
 	</properties>
 
 	<dependencies>
@@ -109,6 +104,7 @@
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>${slf4j}</version>
 		</dependency>
+
 		<!-- Test -->
 
 		<dependency>
@@ -186,65 +182,29 @@
 					</attributes>
 				</configuration>
 			</plugin>
-		</plugins>
 
-		<pluginManagement>
-			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings 
-					only. It has no influence on the Maven build itself. -->
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>
-											com.springsource.bundlor
-										</groupId>
-										<artifactId>
-											com.springsource.bundlor.maven
-										</artifactId>
-										<versionRange>
-											[1.0.0.RELEASE,)
-										</versionRange>
-										<goals>
-											<goal>bundlor</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<ignore></ignore>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
+		</plugins>
 	</build>
 
-	<profiles>
-		<profile>
-			<id>release</id>
-			<build>
-				<plugins>
-					<plugin>
-						<groupId>org.jfrog.buildinfo</groupId>
-						<artifactId>artifactory-maven-plugin</artifactId>
-						<inherited>false</inherited>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-	</profiles>
+	<!--<profiles>-->
+		<!--<profile>-->
+			<!--<id>release</id>-->
+			<!--<build>-->
+				<!--<plugins>-->
+					<!--<plugin>-->
+						<!--<groupId>org.jfrog.buildinfo</groupId>-->
+						<!--<artifactId>artifactory-maven-plugin</artifactId>-->
+						<!--<inherited>false</inherited>-->
+					<!--</plugin>-->
+				<!--</plugins>-->
+			<!--</build>-->
+		<!--</profile>-->
+	<!--</profiles>-->
 
 	<repositories>
 		<repository>
-			<id>spring-libs-snapshot</id>
-			<url>https://repo.spring.io/libs-snapshot</url>
+			<id>spring-libs-milestone</id>
+			<url>https://repo.spring.io/libs-milestone</url>
 		</repository>
 	</repositories>
 
